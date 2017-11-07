@@ -35,7 +35,7 @@ class WorldCommand extends VanillaCommand{
 		parent::__construct(
 			$name,
 			"%pocketmine.command.world.description",
-			"%pocketmine.command.world.usage"
+			"/$name <world> | /$name <player> <world> | /$name list"
 		);
 		$this->setPermission("pocketmine.command.world");
 	}
