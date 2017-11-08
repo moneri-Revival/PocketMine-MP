@@ -20,7 +20,8 @@
       "ext-spl": "*",
       "ext-yaml": ">=2.0.0",
       "ext-zip": "*",
-      "ext-zlib": ">=1.2.11"
+      "ext-zlib": ">=1.2.11",
+      "ext-ds": "^1.2"
    },
    "autoload": {
       "exclude-from-classmap": [

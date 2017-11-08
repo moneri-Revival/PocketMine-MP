@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "d4fecad9dce5314493052c870c8cf059",
+    "content-hash": "8b5bc6e174b09900dee49e114472233c",
     "packages": [],
     "packages-dev": [],
     "aliases": [],
@@ -30,7 +30,8 @@
         "ext-spl": "*",
         "ext-yaml": ">=2.0.0",
         "ext-zip": "*",
-        "ext-zlib": ">=1.2.11"
+        "ext-zlib": ">=1.2.11",
+        "ext-ds": "^1.2"
     },
     "platform-dev": []
 }
