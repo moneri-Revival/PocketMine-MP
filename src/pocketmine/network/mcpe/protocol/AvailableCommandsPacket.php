@@ -25,6 +25,8 @@ namespace pocketmine\network\mcpe\protocol;
 
 #include <rules/DataPacket.h>
 
+use Ds\Map;
+use Ds\Vector;
 use pocketmine\network\mcpe\NetworkSession;
 use pocketmine\network\mcpe\protocol\types\CommandData;
 use pocketmine\network\mcpe\protocol\types\CommandEnum;
@@ -72,18 +74,18 @@ class AvailableCommandsPacket extends DataPacket{
 	const ARG_FLAG_POSTFIX = 0x1000000;
 
 	/**
-	 * @var string[]
+	 * @var \Ds\Vector|string[]
 	 * A list of every single enum value for every single command in the packet, including alias names.
 	 */
-	public $enumValues = [];
+	public $enumValues = null;
 	/** @var int */
 	private $enumValuesCount = 0;
 
 	/**
-	 * @var string[]
+	 * @var \Ds\Vector|string[]
 	 * A list of argument postfixes. Used for the /xp command's <int>L.
 	 */
-	public $postfixes = [];
+	public $postfixes = null;
 
 	/**
 	 * @var CommandEnum[]
@@ -102,15 +104,17 @@ class AvailableCommandsPacket extends DataPacket{
 	public $commandData = [];
 
 	protected function decodePayload(){
-		for($i = 0, $count = $this->getUnsignedVarInt(); $i < $count; ++$i){
-			$this->enumValues[] = $this->getString();
+		$this->enumValues = new Vector();
+		$this->enumValuesCount = $this->getUnsignedVarInt();
+		$this->enumValues->allocate($this->enumValuesCount);
+		for($i = 0; $i < $this->enumValuesCount; ++$i){
+			$this->enumValues->push($this->getString());
 		}
 
-		$this->enumValuesCount = count($this->enumValues);
-
-
-		for($i = 0, $count = $this->getUnsignedVarInt(); $i < $count; ++$i){
-			$this->postfixes[] = $this->getString();
+		$this->postfixes = new Vector();
+		$this->postfixes->allocate($count = $this->getUnsignedVarInt());
+		for($i = 0; $i < $count; ++$i){
+			$this->postfixes->push($this->getString());
 		}
 
 		for($i = 0, $count = $this->getUnsignedVarInt(); $i < $count; ++$i){
@@ -128,7 +132,7 @@ class AvailableCommandsPacket extends DataPacket{
 
 		for($i = 0, $count = $this->getUnsignedVarInt(); $i < $count; ++$i){
 			//Get the enum value from the initial pile of mess
-			$retval->enumValues[] = $this->enumValues[$this->getEnumValueIndex()];
+			$retval->enumValues[] = $this->enumValues->get($this->getEnumValueIndex());
 		}
 
 		return $retval;
@@ -140,7 +144,9 @@ class AvailableCommandsPacket extends DataPacket{
 		$this->putUnsignedVarInt(count($enum->enumValues));
 		foreach($enum->enumValues as $value){
 			//Dumb bruteforce search. I hate this packet.
-			$index = array_search($value, $this->enumValues, true);
+
+			/** @var int|false $index */
+			$index = $this->enumValues->find($value);
 			if($index === false){
 				throw new \InvalidStateException("Enum value '$value' not found");
 			}
@@ -190,7 +196,7 @@ class AvailableCommandsPacket extends DataPacket{
 					assert($parameter->enum !== null, "expected enum at $index, but got none");
 				}elseif(($parameter->paramType & self::ARG_FLAG_VALID) === 0){ //postfix (guessing)
 					$index = ($parameter->paramType & 0xffff);
-					$parameter->postfix = $this->postfixes[$index] ?? null;
+					$parameter->postfix = $this->postfixes->get($index) ?? null;
 
 					assert($parameter->postfix !== null, "expected postfix at $index, but got none");
 				}
@@ -224,7 +230,8 @@ class AvailableCommandsPacket extends DataPacket{
 				if($parameter->enum !== null){
 					$type = self::ARG_FLAG_ENUM | self::ARG_FLAG_VALID | ($this->enumMap[$parameter->enum->enumName] ?? -1);
 				}elseif($parameter->postfix !== null){
-					$key = array_search($parameter->postfix, $this->postfixes, true);
+					/** @var int|false $key */
+					$key = $this->postfixes->find($parameter->postfix);
 					if($key === false){
 						throw new \InvalidStateException("Postfix '$parameter->postfix' not in postfixes array");
 					}
@@ -271,7 +278,7 @@ class AvailableCommandsPacket extends DataPacket{
 			//guessed
 			$baseType = $argtype >> 24;
 			$typeName = $this->argTypeToString(self::ARG_FLAG_VALID | $baseType);
-			$postfix = $this->postfixes[$argtype & 0xffff];
+			$postfix = $this->postfixes->get($argtype & 0xffff);
 
 			return $typeName . " (postfix $postfix)";
 		}
@@ -280,8 +287,8 @@ class AvailableCommandsPacket extends DataPacket{
 	}
 
 	protected function encodePayload(){
-		$enumValuesMap = [];
-		$postfixesMap = [];
+		$enumValuesMap = new Map();
+		$postfixesMap = new Map();
 		$enumMap = [];
 		foreach($this->commandData as $commandData){
 			if($commandData->aliases !== null){
@@ -312,14 +319,14 @@ class AvailableCommandsPacket extends DataPacket{
 			}
 		}
 
-		$this->enumValues = array_map('strval', array_keys($enumValuesMap)); //stupid PHP key casting D:
-		$this->putUnsignedVarInt($this->enumValuesCount = count($this->enumValues));
+		$this->enumValues = new Vector($enumValuesMap->keys()->toArray());
+		$this->putUnsignedVarInt($this->enumValuesCount = $this->enumValues->count());
 		foreach($this->enumValues as $enumValue){
 			$this->putString($enumValue);
 		}
 
-		$this->postfixes = array_map('strval', array_keys($postfixesMap));
-		$this->putUnsignedVarInt(count($this->postfixes));
+		$this->postfixes = new Vector($postfixesMap->keys()->toArray());
+		$this->putUnsignedVarInt($this->postfixes->count());
 		foreach($this->postfixes as $postfix){
 			$this->putString($postfix);
 		}
