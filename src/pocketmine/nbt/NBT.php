@@ -51,7 +51,7 @@ use pocketmine\utils\Binary;
 /**
  * Named Binary Tag encoder/decoder
  */
-class NBT{
+abstract class NBT{
 
 	const LITTLE_ENDIAN = 0;
 	const BIG_ENDIAN = 1;
@@ -278,68 +278,38 @@ class NBT{
 		$this->buffer .= Binary::writeByte($v);
 	}
 
-	public function getShort() : int{
-		return Binary::readShort($this->get(2));
-	}
+	abstract public function getShort() : int;
 
-	public function getSignedShort() : int{
-		return Binary::readSignedShort($this->get(2));
-	}
+	abstract public function getSignedShort() : int;
 
-	public function putShort($v){
-		$this->buffer .= Binary::writeShort($v);
-	}
+	abstract public function putShort($v);
 
-	public function getInt() : int{
-		return Binary::readInt($this->get(4));
-	}
 
-	public function putInt($v){
-		$this->buffer .= Binary::writeInt($v);
-	}
+	abstract public function getInt() : int;
 
-	public function getLong() : int{
-		return Binary::readLong($this->get(8));
-	}
+	abstract public function putInt($v);
 
-	public function putLong($v){
-		$this->buffer .= Binary::writeLong($v);
-	}
+	abstract public function getLong() : int;
 
-	public function getFloat() : float{
-		return Binary::readFloat($this->get(4));
-	}
+	abstract public function putLong($v);
 
-	public function putFloat($v){
-		$this->buffer .= Binary::writeFloat($v);
-	}
 
-	public function getDouble() : float{
-		return Binary::readDouble($this->get(8));
-	}
+	abstract public function getFloat() : float;
 
-	public function putDouble($v){
-		$this->buffer .= Binary::writeDouble($v);
-	}
+	abstract public function putFloat($v);
 
-	public function getString(){
-		return $this->get($this->getShort());
-	}
 
-	public function putString($v){
-		$this->putShort(strlen($v));
-		$this->put($v);
-	}
+	abstract public function getDouble() : float;
 
-	public function getIntArray() : array{
-		$len = $this->getInt();
-		return array_values(unpack("N*", $this->get($len * 4)));
-	}
+	abstract public function putDouble($v);
 
-	public function putIntArray(array $array) : void{
-		$this->putInt(count($array));
-		$this->put(pack("N*", ...$array));
-	}
+	abstract public function getString();
+
+	abstract public function putString($v);
+
+	abstract public function getIntArray() : array;
+
+	abstract public function putIntArray(array $array) : void;
 
 	public function getArray() : array{
 		$data = [];

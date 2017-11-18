@@ -23,6 +23,70 @@ declare(strict_types=1);
 
 namespace pocketmine\nbt;
 
+use pocketmine\utils\Binary;
+
 class BigEndianNBTStream extends NBT{
 
+	public function getShort() : int{
+		return Binary::readShort($this->get(2));
+	}
+
+	public function getSignedShort() : int{
+		return Binary::readSignedShort($this->get(2));
+	}
+
+	public function putShort($v){
+		$this->buffer .= Binary::writeShort($v);
+	}
+
+	public function getInt() : int{
+		return Binary::readInt($this->get(4));
+	}
+
+	public function putInt($v){
+		$this->buffer .= Binary::writeInt($v);
+	}
+
+	public function getLong() : int{
+		return Binary::readLong($this->get(8));
+	}
+
+	public function putLong($v){
+		$this->buffer .= Binary::writeLong($v);
+	}
+
+	public function getFloat() : float{
+		return Binary::readFloat($this->get(4));
+	}
+
+	public function putFloat($v){
+		$this->buffer .= Binary::writeFloat($v);
+	}
+
+	public function getDouble() : float{
+		return Binary::readDouble($this->get(8));
+	}
+
+	public function putDouble($v){
+		$this->buffer .= Binary::writeDouble($v);
+	}
+
+	public function getString(){
+		return $this->get($this->getShort());
+	}
+
+	public function putString($v){
+		$this->putShort(strlen($v));
+		$this->put($v);
+	}
+
+	public function getIntArray() : array{
+		$len = $this->getInt();
+		return array_values(unpack("N*", $this->get($len * 4)));
+	}
+
+	public function putIntArray(array $array) : void{
+		$this->putInt(count($array));
+		$this->put(pack("N*", ...$array));
+	}
 }

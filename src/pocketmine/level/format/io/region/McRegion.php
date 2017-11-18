@@ -30,6 +30,7 @@ use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
 use pocketmine\level\generator\Generator;
 use pocketmine\level\Level;
+use pocketmine\nbt\BigEndianNBTStream;
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\{
 	ByteArrayTag, ByteTag, CompoundTag, IntArrayTag, IntTag, ListTag, LongTag, StringTag
@@ -104,7 +105,7 @@ class McRegion extends BaseLevelProvider{
 
 		$nbt->setTag(new ListTag("TileEntities", $tiles, NBT::TAG_Compound));
 
-		$writer = new NBT();
+		$writer = new BigEndianNBTStream();
 		$nbt->setName("Level");
 		$writer->setData(new CompoundTag("", [$nbt]));
 
@@ -117,7 +118,7 @@ class McRegion extends BaseLevelProvider{
 	 * @return Chunk|null
 	 */
 	public function nbtDeserialize(string $data){
-		$nbt = new NBT();
+		$nbt = new BigEndianNBTStream();
 		try{
 			$nbt->readCompressed($data);
 
@@ -260,7 +261,7 @@ class McRegion extends BaseLevelProvider{
 			new StringTag("LevelName", $name),
 			new CompoundTag("GameRules", [])
 		]);
-		$nbt = new NBT();
+		$nbt = new BigEndianNBTStream();
 		$nbt->setData(new CompoundTag("", [
 			$levelData
 		]));
