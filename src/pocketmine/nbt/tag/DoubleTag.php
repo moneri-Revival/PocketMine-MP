@@ -43,11 +43,11 @@ class DoubleTag extends NamedTag{
 		return NBT::TAG_Double;
 	}
 
-	public function read(NBT $nbt, bool $network = false) : void{
+	public function read(NBT $nbt) : void{
 		$this->value = $nbt->getDouble();
 	}
 
-	public function write(NBT $nbt, bool $network = false) : void{
+	public function write(NBT $nbt) : void{
 		$nbt->putDouble($this->value);
 	}
 

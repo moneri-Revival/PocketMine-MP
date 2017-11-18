@@ -41,12 +41,12 @@ class IntTag extends NamedTag{
 		return NBT::TAG_Int;
 	}
 
-	public function read(NBT $nbt, bool $network = false) : void{
-		$this->value = $nbt->getInt($network);
+	public function read(NBT $nbt) : void{
+		$this->value = $nbt->getInt();
 	}
 
-	public function write(NBT $nbt, bool $network = false) : void{
-		$nbt->putInt($this->value, $network);
+	public function write(NBT $nbt) : void{
+		$nbt->putInt($this->value);
 	}
 
 	/**

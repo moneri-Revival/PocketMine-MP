@@ -48,7 +48,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 		if(!file_exists($this->path)){
 			mkdir($this->path, 0777, true);
 		}
-		$nbt = new NBT(NBT::BIG_ENDIAN);
+		$nbt = new NBT();
 		$nbt->readCompressed(file_get_contents($this->getPath() . "level.dat"));
 		$levelData = $nbt->getData()->getCompoundTag("Data");
 		if($levelData !== null){
@@ -120,7 +120,7 @@ abstract class BaseLevelProvider implements LevelProvider{
 	}
 
 	public function saveLevelData(){
-		$nbt = new NBT(NBT::BIG_ENDIAN);
+		$nbt = new NBT();
 		$nbt->setData(new CompoundTag("", [
 			$this->levelData
 		]));

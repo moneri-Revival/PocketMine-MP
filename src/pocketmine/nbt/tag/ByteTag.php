@@ -43,11 +43,11 @@ class ByteTag extends NamedTag{
 		return NBT::TAG_Byte;
 	}
 
-	public function read(NBT $nbt, bool $network = false) : void{
+	public function read(NBT $nbt) : void{
 		$this->value = $nbt->getSignedByte();
 	}
 
-	public function write(NBT $nbt, bool $network = false) : void{
+	public function write(NBT $nbt) : void{
 		$nbt->putByte($this->value);
 	}
 

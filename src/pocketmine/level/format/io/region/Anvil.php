@@ -27,6 +27,7 @@ use pocketmine\level\format\Chunk;
 use pocketmine\level\format\ChunkException;
 use pocketmine\level\format\io\ChunkUtils;
 use pocketmine\level\format\SubChunk;
+
 use pocketmine\nbt\NBT;
 use pocketmine\nbt\tag\ByteArrayTag;
 use pocketmine\nbt\tag\CompoundTag;
@@ -85,7 +86,7 @@ class Anvil extends McRegion{
 
 		//TODO: TileTicks
 
-		$writer = new NBT(NBT::BIG_ENDIAN);
+		$writer = new NBT();
 		$nbt->setName("Level");
 		$writer->setData(new CompoundTag("", [$nbt]));
 
@@ -102,7 +103,7 @@ class Anvil extends McRegion{
 	}
 
 	public function nbtDeserialize(string $data){
-		$nbt = new NBT(NBT::BIG_ENDIAN);
+		$nbt = new NBT();
 		try{
 			$nbt->readCompressed($data);
 

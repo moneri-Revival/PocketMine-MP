@@ -31,11 +31,11 @@ class EndTag extends Tag{
 		return NBT::TAG_End;
 	}
 
-	public function read(NBT $nbt, bool $network = false) : void{
+	public function read(NBT $nbt) : void{
 
 	}
 
-	public function write(NBT $nbt, bool $network = false) : void{
+	public function write(NBT $nbt) : void{
 
 	}
 }

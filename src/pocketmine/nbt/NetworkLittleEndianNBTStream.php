@@ -21,32 +21,34 @@
 
 declare(strict_types=1);
 
-/**
- * All the NBT Tags
- */
-namespace pocketmine\nbt\tag;
+namespace pocketmine\nbt;
 
-use pocketmine\nbt\NBT;
+use pocketmine\utils\Binary;
 
-abstract class Tag extends \stdClass{
+class NetworkLittleEndianNBTStream extends LittleEndianNBTStream{
 
-	protected $value;
-
-	public function &getValue(){
-		return $this->value;
+	public function getInt() : int{
+		return Binary::readVarInt($this->buffer, $this->offset);
 	}
 
-	abstract public function getType() : int;
-
-	public function setValue($value) : void{
-		$this->value = $value;
+	public function putInt($v){
+		$this->put(Binary::writeVarInt($v));
 	}
 
-	abstract public function write(NBT $nbt) : void;
+	public function getLong() : int{
+		return Binary::readVarLong($this->buffer, $this->offset);
+	}
 
-	abstract public function read(NBT $nbt) : void;
+	public function putLong($v){
+		$this->put(Binary::writeVarLong($v));
+	}
 
-	public function __toString(){
-		return (string) $this->value;
+	public function getString(){
+		return $this->get($this->getInt()); //varint
+	}
+
+	public function putString($v){
+		$this->putInt(strlen($v)); //varint
+		$this->put($v);
 	}
 }

@@ -104,7 +104,7 @@ class McRegion extends BaseLevelProvider{
 
 		$nbt->setTag(new ListTag("TileEntities", $tiles, NBT::TAG_Compound));
 
-		$writer = new NBT(NBT::BIG_ENDIAN);
+		$writer = new NBT();
 		$nbt->setName("Level");
 		$writer->setData(new CompoundTag("", [$nbt]));
 
@@ -117,7 +117,7 @@ class McRegion extends BaseLevelProvider{
 	 * @return Chunk|null
 	 */
 	public function nbtDeserialize(string $data){
-		$nbt = new NBT(NBT::BIG_ENDIAN);
+		$nbt = new NBT();
 		try{
 			$nbt->readCompressed($data);
 
@@ -260,7 +260,7 @@ class McRegion extends BaseLevelProvider{
 			new StringTag("LevelName", $name),
 			new CompoundTag("GameRules", [])
 		]);
-		$nbt = new NBT(NBT::BIG_ENDIAN);
+		$nbt = new NBT();
 		$nbt->setData(new CompoundTag("", [
 			$levelData
 		]));

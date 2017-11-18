@@ -70,7 +70,6 @@ class NBT{
 
 	public $buffer;
 	public $offset;
-	public $endianness;
 	private $data;
 
 	/**
@@ -192,19 +191,19 @@ class NBT{
 		return !isset($this->buffer{$this->offset});
 	}
 
-	public function __construct($endianness = self::LITTLE_ENDIAN){
+	public function __construct(){
 		$this->offset = 0;
-		$this->endianness = $endianness & 0x01;
+		$this->buffer = "";
 	}
 
-	public function read($buffer, $doMultiple = false, bool $network = false){
+	public function read($buffer, $doMultiple = false){
 		$this->offset = 0;
 		$this->buffer = $buffer;
-		$this->data = $this->readTag($network);
+		$this->data = $this->readTag();
 		if($doMultiple and $this->offset < strlen($this->buffer)){
 			$this->data = [$this->data];
 			do{
-				$this->data[] = $this->readTag($network);
+				$this->data[] = $this->readTag();
 			}while($this->offset < strlen($this->buffer));
 		}
 		$this->buffer = "";
@@ -215,21 +214,19 @@ class NBT{
 	}
 
 	/**
-	 * @param bool $network
-	 *
-	 * @return string|bool
+	 * @return bool|string
 	 */
-	public function write(bool $network = false){
+	public function write(){
 		$this->offset = 0;
 		$this->buffer = "";
 
 		if($this->data instanceof CompoundTag){
-			$this->writeTag($this->data, $network);
+			$this->writeTag($this->data);
 
 			return $this->buffer;
 		}elseif(is_array($this->data)){
 			foreach($this->data as $tag){
-				$this->writeTag($tag, $network);
+				$this->writeTag($tag);
 			}
 			return $this->buffer;
 		}
@@ -245,7 +242,7 @@ class NBT{
 		return false;
 	}
 
-	public function readTag(bool $network = false){
+	public function readTag(){
 		if($this->feof()){
 			return new EndTag();
 		}
@@ -254,19 +251,19 @@ class NBT{
 		$tag = self::createTag($tagType);
 
 		if($tag instanceof NamedTag){
-			$tag->setName($this->getString($network));
-			$tag->read($this, $network);
+			$tag->setName($this->getString());
+			$tag->read($this);
 		}
 
 		return $tag;
 	}
 
-	public function writeTag(Tag $tag, bool $network = false){
+	public function writeTag(Tag $tag){
 		$this->putByte($tag->getType());
 		if($tag instanceof NamedTag){
-			$this->putString($tag->getName(), $network);
+			$this->putString($tag->getName());
 		}
-		$tag->write($this, $network);
+		$tag->write($this);
 	}
 
 	public function getByte() : int{
@@ -282,75 +279,56 @@ class NBT{
 	}
 
 	public function getShort() : int{
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readShort($this->get(2)) : Binary::readLShort($this->get(2));
+		return Binary::readShort($this->get(2));
 	}
 
 	public function getSignedShort() : int{
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readSignedShort($this->get(2)) : Binary::readSignedLShort($this->get(2));
+		return Binary::readSignedShort($this->get(2));
 	}
 
 	public function putShort($v){
-		$this->buffer .= $this->endianness === self::BIG_ENDIAN ? Binary::writeShort($v) : Binary::writeLShort($v);
+		$this->buffer .= Binary::writeShort($v);
 	}
 
-	public function getInt(bool $network = false) : int{
-		if($network === true){
-			return Binary::readVarInt($this->buffer, $this->offset);
-		}
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readInt($this->get(4)) : Binary::readLInt($this->get(4));
+	public function getInt() : int{
+		return Binary::readInt($this->get(4));
 	}
 
-	public function putInt($v, bool $network = false){
-		if($network === true){
-			$this->buffer .= Binary::writeVarInt($v);
-		}else{
-			$this->buffer .= $this->endianness === self::BIG_ENDIAN ? Binary::writeInt($v) : Binary::writeLInt($v);
-		}
+	public function putInt($v){
+		$this->buffer .= Binary::writeInt($v);
 	}
 
-	public function getLong(bool $network = false) : int{
-		if($network){
-			return Binary::readVarLong($this->buffer, $this->offset);
-		}
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readLong($this->get(8)) : Binary::readLLong($this->get(8));
+	public function getLong() : int{
+		return Binary::readLong($this->get(8));
 	}
 
-	public function putLong($v, bool $network = false){
-		if($network){
-			$this->buffer .= Binary::writeVarLong($v);
-		}else{
-			$this->buffer .= $this->endianness === self::BIG_ENDIAN ? Binary::writeLong($v) : Binary::writeLLong($v);
-		}
+	public function putLong($v){
+		$this->buffer .= Binary::writeLong($v);
 	}
 
 	public function getFloat() : float{
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readFloat($this->get(4)) : Binary::readLFloat($this->get(4));
+		return Binary::readFloat($this->get(4));
 	}
 
 	public function putFloat($v){
-		$this->buffer .= $this->endianness === self::BIG_ENDIAN ? Binary::writeFloat($v) : Binary::writeLFloat($v);
+		$this->buffer .= Binary::writeFloat($v);
 	}
 
 	public function getDouble() : float{
-		return $this->endianness === self::BIG_ENDIAN ? Binary::readDouble($this->get(8)) : Binary::readLDouble($this->get(8));
+		return Binary::readDouble($this->get(8));
 	}
 
 	public function putDouble($v){
-		$this->buffer .= $this->endianness === self::BIG_ENDIAN ? Binary::writeDouble($v) : Binary::writeLDouble($v);
+		$this->buffer .= Binary::writeDouble($v);
 	}
 
-	public function getString(bool $network = false){
-		$len = $network ? Binary::readUnsignedVarInt($this->buffer, $this->offset) : $this->getShort();
-		return $this->get($len);
+	public function getString(){
+		return $this->get($this->getShort());
 	}
 
-	public function putString($v, bool $network = false){
-		if($network === true){
-			$this->put(Binary::writeUnsignedVarInt(strlen($v)));
-		}else{
-			$this->putShort(strlen($v));
-		}
-		$this->buffer .= $v;
+	public function putString($v){
+		$this->putShort(strlen($v));
+		$this->put($v);
 	}
 
 	public function getArray() : array{

@@ -43,11 +43,11 @@ class FloatTag extends NamedTag{
 		return NBT::TAG_Float;
 	}
 
-	public function read(NBT $nbt, bool $network = false) : void{
+	public function read(NBT $nbt) : void{
 		$this->value = $nbt->getFloat();
 	}
 
-	public function write(NBT $nbt, bool $network = false) : void{
+	public function write(NBT $nbt) : void{
 		$nbt->putFloat($this->value);
 	}
 

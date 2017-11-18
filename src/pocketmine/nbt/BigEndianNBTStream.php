@@ -21,32 +21,8 @@
 
 declare(strict_types=1);
 
-/**
- * All the NBT Tags
- */
-namespace pocketmine\nbt\tag;
+namespace pocketmine\nbt;
 
-use pocketmine\nbt\NBT;
+class BigEndianNBTStream extends NBT{
 
-abstract class Tag extends \stdClass{
-
-	protected $value;
-
-	public function &getValue(){
-		return $this->value;
-	}
-
-	abstract public function getType() : int;
-
-	public function setValue($value) : void{
-		$this->value = $value;
-	}
-
-	abstract public function write(NBT $nbt) : void;
-
-	abstract public function read(NBT $nbt) : void;
-
-	public function __toString(){
-		return (string) $this->value;
-	}
 }
