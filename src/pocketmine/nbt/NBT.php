@@ -303,9 +303,14 @@ abstract class NBT{
 
 	abstract public function putDouble($v);
 
-	abstract public function getString();
+	public function getString(){
+		return $this->get($this->getShort());
+	}
 
-	abstract public function putString($v);
+	public function putString($v){
+		$this->putShort(strlen($v));
+		$this->put($v);
+	}
 
 	abstract public function getIntArray() : array;
 

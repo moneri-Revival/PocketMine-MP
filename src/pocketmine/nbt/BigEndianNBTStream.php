@@ -71,15 +71,6 @@ class BigEndianNBTStream extends NBT{
 		$this->buffer .= Binary::writeDouble($v);
 	}
 
-	public function getString(){
-		return $this->get($this->getShort());
-	}
-
-	public function putString($v){
-		$this->putShort(strlen($v));
-		$this->put($v);
-	}
-
 	public function getIntArray() : array{
 		$len = $this->getInt();
 		return array_values(unpack("N*", $this->get($len * 4)));
