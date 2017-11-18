@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace pocketmine\nbt\tag;
 
-use pocketmine\nbt\LittleEndianNBTStream;
 use pocketmine\nbt\NBT;
 
 #include <rules/NBT.h>
@@ -45,13 +44,11 @@ class IntArrayTag extends NamedTag{
 	}
 
 	public function read(NBT $nbt) : void{
-		$size = $nbt->getInt();
-		$this->value = array_values(unpack($nbt instanceof LittleEndianNBTStream ? "V*" : "N*", $nbt->get($size * 4)));
+		$this->value = $nbt->getIntArray();
 	}
 
 	public function write(NBT $nbt) : void{
-		$nbt->putInt(count($this->value));
-		$nbt->put(pack($nbt instanceof LittleEndianNBTStream ? "V*" : "N*", ...$this->value));
+		$nbt->putIntArray($this->value);
 	}
 
 	public function __toString(){

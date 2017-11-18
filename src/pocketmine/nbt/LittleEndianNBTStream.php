@@ -70,4 +70,14 @@ class LittleEndianNBTStream extends NBT{
 	public function putDouble($v){
 		$this->put(Binary::writeLDouble($v));
 	}
+
+	public function getIntArray() : array{
+		$len = $this->getInt();
+		return array_values(unpack("V*", $this->get($len * 4)));
+	}
+
+	public function putIntArray(array $array) : void{
+		$this->putInt(count($array));
+		$this->put(pack("V*", ...$array));
+	}
 }

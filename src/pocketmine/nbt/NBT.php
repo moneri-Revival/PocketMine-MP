@@ -331,6 +331,16 @@ class NBT{
 		$this->put($v);
 	}
 
+	public function getIntArray() : array{
+		$len = $this->getInt();
+		return array_values(unpack("N*", $this->get($len * 4)));
+	}
+
+	public function putIntArray(array $array) : void{
+		$this->putInt(count($array));
+		$this->put(pack("N*", ...$array));
+	}
+
 	public function getArray() : array{
 		$data = [];
 		self::toArray($data, $this->data);
