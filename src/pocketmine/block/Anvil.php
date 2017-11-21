@@ -33,9 +33,9 @@ use pocketmine\Player;
 
 class Anvil extends Fallable{
 
-	const TYPE_NORMAL = 0;
-	const TYPE_SLIGHTLY_DAMAGED = 4;
-	const TYPE_VERY_DAMAGED = 8;
+	public const TYPE_NORMAL = 0;
+	public const TYPE_SLIGHTLY_DAMAGED = 4;
+	public const TYPE_VERY_DAMAGED = 8;
 
 	protected $id = self::ANVIL;
 
@@ -100,7 +100,7 @@ class Anvil extends Fallable{
 		return true;
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$direction = ($player !== null ? $player->getDirection() : 0) & 0x03;
 		$this->meta = ($this->meta & 0x0c) | $direction;
 		return $this->getLevel()->setBlock($blockReplace, $this, true, true);

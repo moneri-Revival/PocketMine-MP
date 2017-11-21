@@ -32,12 +32,12 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Leaves extends Transparent{
-	const OAK = 0;
-	const SPRUCE = 1;
-	const BIRCH = 2;
-	const JUNGLE = 3;
-	const ACACIA = 0;
-	const DARK_OAK = 1;
+	public const OAK = 0;
+	public const SPRUCE = 1;
+	public const BIRCH = 2;
+	public const JUNGLE = 3;
+	public const ACACIA = 0;
+	public const DARK_OAK = 1;
 
 	protected $id = self::LEAVES;
 	protected $woodType = self::WOOD;
@@ -164,7 +164,7 @@ class Leaves extends Transparent{
 		return false;
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$this->meta |= 0x04;
 		return $this->getLevel()->setBlock($this, $this, true);
 	}

@@ -33,8 +33,8 @@ use pocketmine\tile\Tile;
 
 class FlowerPot extends Flowable{
 
-	const STATE_EMPTY = 0;
-	const STATE_FULL = 1;
+	public const STATE_EMPTY = 0;
+	public const STATE_FULL = 1;
 
 	protected $id = self::FLOWER_POT_BLOCK;
 	protected $itemId = Item::FLOWER_POT;
@@ -58,7 +58,7 @@ class FlowerPot extends Flowable{
 		);
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		if($this->getSide(Vector3::SIDE_DOWN)->isTransparent()){
 			return false;
 		}

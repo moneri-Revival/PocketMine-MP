@@ -36,19 +36,23 @@ abstract class Slab extends Transparent{
 
 	abstract public function getDoubleSlabId() : int;
 
-	public function canBePlacedAt(Block $blockReplace, Vector3 $clickVector) : bool{
-		return parent::canBePlacedAt($blockReplace, $clickVector) or
-			(
-				$blockReplace->getId() === $this->getId() and
-				$blockReplace->getVariant() === $this->getVariant() and
-				(
-					(($blockReplace->getDamage() & 0x08) !== 0 and ($clickVector->y <= 0.5 or $clickVector->y === 1.0)) or //top slab, fill bottom half
-					(($blockReplace->getDamage() & 0x08) === 0 and ($clickVector->y >= 0.5 or $clickVector->y === 0.0)) //bottom slab, fill top half
-				)
-			);
+	public function canBePlacedAt(Block $blockReplace, Vector3 $clickVector, int $face, bool $isClickedBlock) : bool{
+		if(parent::canBePlacedAt($blockReplace, $clickVector, $face, $isClickedBlock)){
+			return true;
+		}
+
+		if($blockReplace->getId() === $this->getId() and $blockReplace->getVariant() === $this->getVariant()){
+			if(($blockReplace->getDamage() & 0x08) !== 0){ //Trying to combine with top slab
+				return $clickVector->y <= 0.5 or (!$isClickedBlock and $face === Vector3::SIDE_UP);
+			}else{
+				return $clickVector->y >= 0.5 or (!$isClickedBlock and $face === Vector3::SIDE_DOWN);
+			}
+		}
+
+		return false;
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$this->meta &= 0x07;
 		if($face === Vector3::SIDE_DOWN){
 			if($blockClicked->getId() === $this->id and ($blockClicked->getDamage() & 0x08) === 0x08 and $blockClicked->getVariant() === $this->getVariant()){
@@ -82,7 +86,7 @@ abstract class Slab extends Transparent{
 
 				return false;
 			}else{
-				if($facePos->y > 0.5){
+				if($clickVector->y > 0.5){
 					$this->meta |= 0x08;
 				}
 			}

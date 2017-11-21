@@ -30,10 +30,10 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Wood extends Solid{
-	const OAK = 0;
-	const SPRUCE = 1;
-	const BIRCH = 2;
-	const JUNGLE = 3;
+	public const OAK = 0;
+	public const SPRUCE = 1;
+	public const BIRCH = 2;
+	public const JUNGLE = 3;
 
 	protected $id = self::WOOD;
 
@@ -55,7 +55,7 @@ class Wood extends Solid{
 		return $names[$this->getVariant()] ?? "Unknown";
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$this->meta = PillarRotationHelper::getMetaFromFace($this->meta, $face);
 		return $this->getLevel()->setBlock($blockReplace, $this, true, true);
 	}

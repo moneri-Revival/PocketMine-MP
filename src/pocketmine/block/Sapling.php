@@ -31,12 +31,12 @@ use pocketmine\Player;
 use pocketmine\utils\Random;
 
 class Sapling extends Flowable{
-	const OAK = 0;
-	const SPRUCE = 1;
-	const BIRCH = 2;
-	const JUNGLE = 3;
-	const ACACIA = 4;
-	const DARK_OAK = 5;
+	public const OAK = 0;
+	public const SPRUCE = 1;
+	public const BIRCH = 2;
+	public const JUNGLE = 3;
+	public const ACACIA = 4;
+	public const DARK_OAK = 5;
 
 	protected $id = self::SAPLING;
 
@@ -60,7 +60,7 @@ class Sapling extends Flowable{
 		return true;
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$down = $this->getSide(Vector3::SIDE_DOWN);
 		if($down->getId() === self::GRASS or $down->getId() === self::DIRT or $down->getId() === self::FARMLAND){
 			$this->getLevel()->setBlock($blockReplace, $this, true, true);

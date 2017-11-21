@@ -31,9 +31,9 @@ use pocketmine\Player;
 
 class Quartz extends Solid{
 
-	const NORMAL = 0;
-	const CHISELED = 1;
-	const PILLAR = 2;
+	public const NORMAL = 0;
+	public const CHISELED = 1;
+	public const PILLAR = 2;
 
 	protected $id = self::QUARTZ_BLOCK;
 
@@ -54,7 +54,7 @@ class Quartz extends Solid{
 		return $names[$this->getVariant()] ?? "Unknown";
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		if($this->meta !== self::NORMAL){
 			$this->meta = PillarRotationHelper::getMetaFromFace($this->meta, $face);
 		}

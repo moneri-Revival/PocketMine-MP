@@ -31,13 +31,13 @@ use pocketmine\math\Vector3;
 use pocketmine\Player;
 
 class Trapdoor extends Transparent{
-	const MASK_UPPER = 0x04;
-	const MASK_OPENED = 0x08;
-	const MASK_SIDE = 0x03;
-	const MASK_SIDE_SOUTH = 2;
-	const MASK_SIDE_NORTH = 3;
-	const MASK_SIDE_EAST = 0;
-	const MASK_SIDE_WEST = 1;
+	public const MASK_UPPER = 0x04;
+	public const MASK_OPENED = 0x08;
+	public const MASK_SIDE = 0x03;
+	public const MASK_SIDE_SOUTH = 2;
+	public const MASK_SIDE_NORTH = 3;
+	public const MASK_SIDE_EAST = 0;
+	public const MASK_SIDE_WEST = 1;
 
 	protected $id = self::TRAPDOOR;
 
@@ -124,7 +124,7 @@ class Trapdoor extends Transparent{
 		return $bb;
 	}
 
-	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $facePos, Player $player = null) : bool{
+	public function place(Item $item, Block $blockReplace, Block $blockClicked, int $face, Vector3 $clickVector, Player $player = null) : bool{
 		$directions = [
 			0 => 1,
 			1 => 3,
@@ -134,7 +134,7 @@ class Trapdoor extends Transparent{
 		if($player !== null){
 			$this->meta = $directions[$player->getDirection() & 0x03];
 		}
-		if(($facePos->y > 0.5 and $face !== self::SIDE_UP) or $face === self::SIDE_DOWN){
+		if(($clickVector->y > 0.5 and $face !== self::SIDE_UP) or $face === self::SIDE_DOWN){
 			$this->meta |= self::MASK_UPPER; //top half of block
 		}
 		$this->getLevel()->setBlock($blockReplace, $this, true, true);
