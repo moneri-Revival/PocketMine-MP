@@ -30,20 +30,20 @@ use pocketmine\network\mcpe\protocol\LevelEventPacket;
 use pocketmine\Player;
 
 class ExperienceOrb extends Entity{
-	const NETWORK_ID = self::XP_ORB;
+	public const NETWORK_ID = self::XP_ORB;
 
-	const TAG_VALUE_PC = "Value"; //short
-	const TAG_VALUE_PE = "experience value"; //int (WTF?)
+	public const TAG_VALUE_PC = "Value"; //short
+	public const TAG_VALUE_PE = "experience value"; //int (WTF?)
 
 	/**
 	 * Max distance an orb will follow a player across.
 	 */
-	const MAX_TARGET_DISTANCE = 8.0;
+	public const MAX_TARGET_DISTANCE = 8.0;
 
 	/**
 	 * Split sizes used for dropping experience orbs.
 	 */
-	const ORB_SPLIT_SIZES = [2477, 1237, 617, 307, 149, 73, 37, 17, 7, 3, 1]; //This is indexed biggest to smallest so that we can return as soon as we found the biggest value.
+	public const ORB_SPLIT_SIZES = [2477, 1237, 617, 307, 149, 73, 37, 17, 7, 3, 1]; //This is indexed biggest to smallest so that we can return as soon as we found the biggest value.
 
 	/**
 	 * Returns the largest size of normal XP orb that will be spawned for the specified amount of XP. Used to split XP
