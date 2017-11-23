@@ -153,8 +153,6 @@ class ExperienceOrb extends Entity{
 		$this->targetPlayerRuntimeId = $player ? $player->getId() : null;
 	}
 
-
-
 	public function entityBaseTick(int $tickDiff = 1) : bool{
 		$hasUpdate = parent::entityBaseTick($tickDiff);
 
