@@ -129,6 +129,9 @@ class ExperienceOrb extends Entity{
 	}
 
 	public function setXpValue(int $amount) : void{
+		if($amount <= 0){
+			throw new \InvalidArgumentException("XP amount must be greater than 0, got $amount");
+		}
 		$this->setDataProperty(self::DATA_EXPERIENCE_VALUE, self::DATA_TYPE_INT, $amount);
 	}
 
