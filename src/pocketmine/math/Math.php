@@ -49,15 +49,17 @@ abstract class Math{
 	 * @return float[]
 	 */
 	public static function solveQuadratic(float $a, float $b, float $c) : array{
-		$sqrtDiscriminant = sqrt($b ** 2 - 4 * $a * $c);
-		$x = [
-			(-$b + $sqrtDiscriminant) / (2 * $a),
-			(-$b - $sqrtDiscriminant) / (2 * $a)
-		];
-
-		if($x[0] == $x[1]){
-			unset($x[1]);
+		$discriminant = $b ** 2 - 4 * $a * $c;
+		if($discriminant > 0){ //2 real roots
+			$sqrtDiscriminant = sqrt($discriminant);
+			return [
+				(-$b + $sqrtDiscriminant) / (2 * $a),
+				(-$b - $sqrtDiscriminant) / (2 * $a)
+			];
+		}elseif($discriminant == 0){ //1 real root
+			return -$b / (2 * $a);
+		}else{ //No real roots
+			return [];
 		}
-		return $x;
 	}
 }
