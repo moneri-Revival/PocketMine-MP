@@ -193,20 +193,18 @@ class ExperienceOrb extends Entity{
 				$this->motionY += $vector->y / $distance * $oneMinusDistance * 0.2;
 				$this->motionZ += $vector->z / $distance * $oneMinusDistance * 0.2;
 			}
+
+			if($currentTarget->canPickupXp() and $this->boundingBox->intersectsWith($currentTarget->getBoundingBox())){
+				$this->kill();
+
+				$currentTarget->addXp($this->getXpValue());
+				$this->level->broadcastLevelEvent($this, LevelEventPacket::EVENT_SOUND_ORB, mt_rand());
+				$currentTarget->resetXpCooldown();
+
+				//TODO: check Mending enchantment
+			}
 		}
 
 		return $hasUpdate;
-	}
-
-	public function onCollideWithPlayer(Player $player){
-		if($player->canPickupXp() and $player === $this->getTargetPlayer()){
-			$player->addXp($this->getXpValue());
-			$this->level->broadcastLevelEvent($this, LevelEventPacket::EVENT_SOUND_ORB, mt_rand());
-			$player->resetXpCooldown();
-
-			$this->flagForDespawn();
-
-			//TODO: check Mending enchantment
-		}
 	}
 }
