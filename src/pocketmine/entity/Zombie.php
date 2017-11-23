@@ -59,4 +59,9 @@ class Zombie extends Monster{
 
 		return $drops;
 	}
+
+	public function getXpDropAmount() : int{
+		//TODO: check for equipment and whether it's a baby
+		return 5;
+	}
 }
