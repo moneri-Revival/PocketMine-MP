@@ -28,6 +28,7 @@ use pocketmine\entity\utils\ExperienceUtils;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityRegainHealthEvent;
 use pocketmine\event\player\PlayerExhaustEvent;
+use pocketmine\inventory\EnderChestInventory;
 use pocketmine\inventory\InventoryHolder;
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\item\enchantment\Enchantment;
@@ -54,6 +55,9 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 
 	/** @var PlayerInventory */
 	protected $inventory;
+
+	/** @var EnderChestInventory */
+	protected $enderChestInventory;
 
 	/** @var UUID */
 	protected $uuid;
@@ -414,6 +418,10 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		return $this->inventory;
 	}
 
+	public function getEnderChestInventory(){
+		return $this->enderChestInventory;
+	}
+
 	/**
 	 * For Human entities which are not players, sets their properties such as nametag, skin and UUID from NBT.
 	 */
@@ -439,6 +447,7 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 		$this->setDataProperty(self::DATA_PLAYER_BED_POSITION, self::DATA_TYPE_POS, [0, 0, 0], false);
 
 		$this->inventory = new PlayerInventory($this);
+		$this->enderChestInventory = new EnderChestInventory($this);
 		$this->initHumanData();
 
 		$inventoryTag = $this->namedtag->getListTag("Inventory");
@@ -454,6 +463,14 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 				}else{
 					$this->inventory->setItem($slot - 9, ItemItem::nbtDeserialize($item));
 				}
+			}
+		}
+
+		$enderChestInventoryTag = $this->namedtag->getListTag("EnderChestInventory");
+		if($enderChestInventoryTag !== null){
+			/** @var CompoundTag $item */
+			foreach($enderChestInventoryTag as $i => $item){
+				$this->enderChestInventory->setItem($item->getByte("Slot"), ItemItem::nbtDeserialize($item));
 			}
 		}
 
@@ -592,6 +609,21 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			$this->namedtag->setInt("SelectedInventorySlot", $this->inventory->getHeldItemIndex());
 		}
 
+		if($this->enderChestInventory !== null){
+			/** @var CompoundTag[] $items */
+			$items = [];
+
+			$slotCount = $this->enderChestInventory->getSize();
+			for($slot = 0; $slot < $slotCount; ++$slot){
+				$item = $this->enderChestInventory->getItem($slot);
+				if(!$item->isNull()){
+					$items[] = $item->nbtSerialize($slot);
+				}
+			}
+
+			$this->namedtag->setTag(new ListTag("EnderChestInventory", $items, NBT::TAG_Compound));
+		}
+
 		if($this->skin !== null){
 			$this->namedtag->setTag(new CompoundTag("Skin", [
 				//TODO: save cape & geometry
@@ -636,6 +668,10 @@ class Human extends Creature implements ProjectileSource, InventoryHolder{
 			if($this->inventory !== null){
 				$this->inventory->removeAllViewers(true);
 				$this->inventory = null;
+			}
+			if($this->enderChestInventory !== null){
+				$this->enderChestInventory->removeAllViewers(true);
+				$this->enderChestInventory = null;
 			}
 			parent::close();
 		}
