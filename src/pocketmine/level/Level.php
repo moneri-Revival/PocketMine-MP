@@ -1589,12 +1589,21 @@ class Level implements ChunkManager, Metadatable{
 		$orbs = [];
 
 		foreach(ExperienceOrb::splitIntoOrbSizes($amount) as $split){
-			$orb = Entity::createEntity("XPOrb", $this, Entity::createBaseNBT($pos, $this->temporalVector->setComponents((lcg_value() * 0.2 - 0.1) * 2, lcg_value() * 0.4, (lcg_value() * 0.2 - 0.1) * 2), lcg_value() * 360, 0));
+			$nbt = Entity::createBaseNBT(
+				$pos,
+				$this->temporalVector->setComponents((lcg_value() * 0.2 - 0.1) * 2, lcg_value() * 0.4, (lcg_value() * 0.2 - 0.1) * 2),
+				lcg_value() * 360,
+				0
+			);
+			$nbt->setShort(ExperienceOrb::TAG_VALUE_PC, $split);
 
+			$orb = Entity::createEntity("XPOrb", $this, $nbt);
+			if($orb === null){
+				continue;
+			}
+
+			$orb->spawnToAll();
 			if($orb instanceof ExperienceOrb){
-				$orb->setXpValue($split);
-				$orb->spawnToAll();
-
 				$orbs[] = $orb;
 			}
 		}
