@@ -48,7 +48,7 @@ abstract class Math{
 	 *
 	 * @return float[]
 	 */
-	public static function solveQuadratic(float $a, float $b, float $c): array{
+	public static function solveQuadratic(float $a, float $b, float $c) : array{
 		$sqrtDiscriminant = sqrt($b ** 2 - 4 * $a * $c);
 		$x = [
 			(-$b + $sqrtDiscriminant) / (2 * $a),
