@@ -1953,7 +1953,7 @@ class Level implements ChunkManager, Metadatable{
 		return $nearby;
 	}
 
-	public function getNearestPlayer(Vector3 $pos, float $maxDistance) : ?Player{
+	public function getNearestPlayer(Vector3 $pos, float $maxDistance, bool $includeDeadPlayers = false) : ?Player{
 		$minX = Math::floorFloat(($pos->x - $maxDistance) / 16);
 		$maxX = Math::ceilFloat(($pos->x + $maxDistance) / 16);
 		$minZ = Math::floorFloat(($pos->z - $maxDistance) / 16);
@@ -1967,6 +1967,9 @@ class Level implements ChunkManager, Metadatable{
 		for($x = $minX; $x <= $maxX; ++$x){
 			for($z = $minZ; $z <= $maxZ; ++$z){
 				foreach($this->getChunkPlayers($x, $z) as $player){
+					if($player->isClosed() or $player->isFlaggedForDespawn() or (!$includeDeadPlayers and !$player->isAlive())){
+						continue;
+					}
 					$distSq = $player->distanceSquared($pos);
 					if($distSq < $currentTargetDistSq){
 						$currentTargetDistSq = $distSq;
