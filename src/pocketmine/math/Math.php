@@ -57,7 +57,9 @@ abstract class Math{
 				(-$b - $sqrtDiscriminant) / (2 * $a)
 			];
 		}elseif($discriminant == 0){ //1 real root
-			return -$b / (2 * $a);
+			return [
+				-$b / (2 * $a)
+			];
 		}else{ //No real roots
 			return [];
 		}
