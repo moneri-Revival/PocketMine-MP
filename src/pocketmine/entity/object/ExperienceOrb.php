@@ -157,7 +157,7 @@ class ExperienceOrb extends Entity{
 		$hasUpdate = parent::entityBaseTick($tickDiff);
 
 		if($this->age > 6000){
-			$this->kill();
+			$this->flagForDespawn();
 			return true;
 		}
 
@@ -193,7 +193,7 @@ class ExperienceOrb extends Entity{
 			}
 
 			if($currentTarget->canPickupXp() and $this->boundingBox->intersectsWith($currentTarget->getBoundingBox())){
-				$this->kill();
+				$this->flagForDespawn();
 
 				$currentTarget->addXp($this->getXpValue());
 				$this->level->broadcastLevelEvent($this, LevelEventPacket::EVENT_SOUND_ORB, mt_rand());
