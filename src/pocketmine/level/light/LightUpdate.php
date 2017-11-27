@@ -114,6 +114,10 @@ abstract class LightUpdate{
 		while(!$this->spreadQueue->isEmpty()){
 			list($x, $y, $z) = $this->spreadQueue->dequeue();
 
+			if(!$this->subChunkHandler->moveTo($x, $y, $z)){
+				continue;
+			}
+
 			$newAdjacentLight = $this->getLight($x, $y, $z);
 			if($newAdjacentLight <= 0){
 				continue;
